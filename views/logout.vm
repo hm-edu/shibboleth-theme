@@ -33,18 +33,16 @@
         #end
         *#
         <title>#springMessageText("idp.title", "Web Login Service")</title>
-        <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/main.css">
+        <script src="$request.getContextPath()/js/dark-mode-switch.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/dark.css">
     </head>
 
     <body>
-    <div class="wrapper">   
       <div class="container">
-        <header>
-          <img src="$request.getContextPath()#springMessage("idp.logo")" alt="#springMessageText("idp.logo.alt-text", "logo")">
-        </header>
-
-        <div class="content">
-          <div class="column one">
+        #parse("header.vm")
+        <div class="row justify-content-center">
+          <div class="col-md-9 col-lg-8 col-xl-7 ml-md-auto content shadow p-3 mb-5 bg-body rounded">
             <p>This page is displayed when a logout operation at the Identity Provider completes. This page is an example
             and should be customized. It is not fully internationalized because the presentation will be a highly localized
             decision, and we don't have a good suggestion for a default.</p>
@@ -69,14 +67,14 @@
               <form id="propagate_form" method="POST" action="$flowExecutionUrl">
                 
                 <div class="form-element-wrapper">
-                  <button id="logout_local" class="form-element form-button" type="submit" name="_eventId" value="local">#springMessageText("idp.logout.idponly", "Logout Locally")</button>
+                  <button id="logout_local" class="btn btn-primary" type="submit" name="_eventId" value="local">#springMessageText("idp.logout.idponly", "Logout Locally")</button>
                   <p>#springMessageText("idp.logout.idponly.caption", "End your SSO session.")</p>
                 </div>
             #end
 
             #if ($promptForSP)
                 <div class="form-element-wrapper">
-                  <button id="logout_propagate" class="form-element form-button" type="submit" name="_eventId" value="propagate">#springMessageText("idp.logout.global", "Logout Globally")</button>
+                  <button id="logout_propagate" class="btn btn-primary" type="submit" name="_eventId" value="propagate">#springMessageText("idp.logout.global", "Logout Globally")</button>
                   <p>#springMessageText("idp.logout.global.caption", "End your SSO session and attempt logout of services accessed during session.")</p>
                   <br>
                   <p>#springMessageText("idp.logout.contactServices", "If instructed, the system will attempt to contact the following services:")</p>
@@ -99,7 +97,7 @@
 
             #if ($promptForIdP)
                 <div class="form-element-wrapper">
-                  <button id="logout_cancel" class="form-element form-button" type="submit" name="_eventId" value="end">#springMessageText("idp.logout.cancel", "Cancel")</button>
+                  <button id="logout_cancel" class="btn btn-primary" type="submit" name="_eventId" value="end">#springMessageText("idp.logout.cancel", "Cancel")</button>
                   <p>#springMessageText("idp.logout.cancel.caption", "Cancel logout and retain your SSO session.")</p>
                 </div>
             #end
@@ -113,21 +111,11 @@
             #end
 
           </div>
-          <div class="column two">
-            <ul class="list list-help">
-              <li class="list-help-item"><a href="#springMessageText("idp.url.password.reset", '#')"><span class="item-marker">&rsaquo;</span> #springMessageText("idp.login.forgotPassword", "Forgot your password?")</a></li>
-              <li class="list-help-item"><a href="#springMessageText("idp.url.helpdesk", '#')"><span class="item-marker">&rsaquo;</span> #springMessageText("idp.login.needHelp", "Need Help?")</a></li>
-            </ul>
-          </div>
         </div>
+        #parse("footer.vm")
       </div>
 
-      <footer>
-        <div class="container container-footer">
-          <p class="footer-text">#springMessageText("idp.footer", "Insert your footer text here.")</p>
-        </div>
-      </footer>
-    </div>
+      
     
   </body>
 </html>

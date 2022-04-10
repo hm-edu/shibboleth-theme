@@ -20,50 +20,53 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width,initial-scale=1.0">
-        <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/consent.css">
+        <script src="$request.getContextPath()/js/dark-mode-switch.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/dark.css">
         <title>#springMessageText("${termsOfUseId}.title", "Terms of Use")</title>
     </head>
     <body>
-        <div class="box">
-            <header>
-                <img src="$request.getContextPath()#springMessage("idp.logo")" alt="#springMessageText("idp.logo.alt-text", "logo")" class="federation_logo">
-                #if ($rpOrganizationLogo)
-                    <img src="$encoder.encodeForHTMLAttribute($rpOrganizationLogo)" alt="$encoder.encodeForHTMLAttribute($serviceName)" class="organization_logo">
-                #end
-            </header>
-            #if ($rpOrganizationLogo)
-                <div style="float:left;">
-                    <h1>#springMessageText("${termsOfUseId}.title", "Terms of Use")</h1>
-                </div>
-            #end
-            <div id="tou-content">
-                #springMessageText("${termsOfUseId}.text", "Terms of Use Text...")
-            </div>
-            <div id="tou-acceptance">
-                <div style="float:left;">
-                    <form action="$flowExecutionUrl" method="post" >
-                        #parse("csrf/csrf.vm")
-                        <input type="submit" name="_eventId_TermsRejected" value="#springMessageText("idp.terms-of-use.reject", "Refuse")" style="margin-right: 30px;">
-                    </form>
-                </div>
-                <div style="float:right;">
-                    <form action="$flowExecutionUrl" method="post" >
-                        #parse("csrf/csrf.vm")
-                        <input id="accept" type="checkbox" name="_shib_idp_consentIds" value="$encoder.encodeForHTML($termsOfUseId)" required>
-                        <label for="accept">#springMessageText("idp.terms-of-use.accept", "I accept the terms of use")</label>
-                        #if ($requireCheckbox)
-                            <p class="form-error">#springMessageText("idp.terms-of-use.required", "Please check this box if you want to proceed.")</p>
+        <div class="container">
+            <div class="row justify-content-center">
+                #parse("header.vm")
+                <div class="row justify-content-center">
+                  <div class="col-md-9 col-lg-8 col-xl-7 ml-md-auto content shadow p-3 mb-5 bg-body rounded">
+                    <header>
+                        #if ($rpOrganizationLogo)
+                            <img src="$encoder.encodeForHTMLAttribute($rpOrganizationLogo)" alt="$encoder.encodeForHTMLAttribute($serviceName)" class="organization_logo">
                         #end
-                        <input type="submit" name="_eventId_proceed" value="#springMessageText("idp.terms-of-use.submit", "Submit")">
-                    </form>
+                    </header>
+                    #if ($rpOrganizationLogo)
+                        <div style="float:left;">
+                            <h1>#springMessageText("${termsOfUseId}.title", "Terms of Use")</h1>
+                        </div>
+                    #end
+                    <div id="tou-content">
+                        #springMessageText("${termsOfUseId}.text", "Terms of Use Text...")
+                    </div>
+                    <div id="tou-acceptance">
+                        <div style="float:left;">
+                            <form action="$flowExecutionUrl" method="post" >
+                                #parse("csrf/csrf.vm")
+                                <input type="submit" name="_eventId_TermsRejected" value="#springMessageText("idp.terms-of-use.reject", "Refuse")" style="margin-right: 30px;">
+                            </form>
+                        </div>
+                        <div style="float:right;">
+                            <form action="$flowExecutionUrl" method="post" >
+                                #parse("csrf/csrf.vm")
+                                <input id="accept" type="checkbox" name="_shib_idp_consentIds" value="$encoder.encodeForHTML($termsOfUseId)" required>
+                                <label for="accept">#springMessageText("idp.terms-of-use.accept", "I accept the terms of use")</label>
+                                #if ($requireCheckbox)
+                                    <p class="form-error">#springMessageText("idp.terms-of-use.required", "Please check this box if you want to proceed.")</p>
+                                #end
+                                <input type="submit" name="_eventId_proceed" value="#springMessageText("idp.terms-of-use.submit", "Submit")">
+                            </form>
+                        </div>
+                        <div style="clear:both;"></div>
+                    </div>
                 </div>
-                <div style="clear:both;"></div>
-            </div>
-            <footer>
-                <div class="container container-footer">
-                    <p class="footer-text">#springMessageText("idp.footer", "Insert your footer text here.")</p>
-                </div>
-            </footer>
+                #parse("footer.vm")
+            </div>        
         </div>
     </body>
 </html>

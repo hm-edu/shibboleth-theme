@@ -20,6 +20,7 @@
         <meta name="viewport" content="width=device-width,initial-scale=1.0">
         <title>$title - $titleSuffix</title>
         <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/main.css">
+        <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/dark.css">
     </head>
     
     <body>

@@ -20,7 +20,7 @@
 #end
 
 #if ($message)
-    <section>
-        <p class="form-element form-error">$encoder.encodeForHTML($message)</p>
+    <section class="alert alert-danger" role="alert">
+        $encoder.encodeForHTML($message)
     </section>
 #end

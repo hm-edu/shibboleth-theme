@@ -1,0 +1,9 @@
+<div class="row justify-content-center">
+    <div class="col-md-9 col-lg-8 col-xl-7 ml-md-auto">
+        <p class="footer-text">#springMessageText("idp.footer", "Insert your footer text here.")</p>
+        <div class="form-check form-switch d-flex justify-content-end">
+            <input type="checkbox" class="form-check-input pd-2" id="darkSwitch" />
+            <label class="custom-control-label" style="margin-left: 4px;" for="darkSwitch">Dunkles Design</label>
+        </div>
+    </div>
+</div>

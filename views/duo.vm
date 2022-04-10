@@ -20,64 +20,49 @@
 ##
 <!DOCTYPE html>
 <html>
+
 <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>#springMessageText("idp.title", "Web Login Service")</title>
-    <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/main.css">
-    <style>
-      #duo_iframe {
-        width: 100%;
-        min-width: 304px;
-        max-width: 620px;
-        height: 330px;
-      }
-    </style>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>#springMessageText("idp.title", "Web Login Service")</title>
+  <script src="$request.getContextPath()/js/dark-mode-switch.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/dark.css">
+  <style>
+    #duo_iframe {
+      width: 100%;
+      min-width: 304px;
+      max-width: 620px;
+      height: 330px;
+    }
+  </style>
 </head>
+
 <body>
-    <div class="wrapper">
-      <div class="container">
-        <header>
-          <img src="$request.getContextPath()#springMessage("idp.logo")" alt="#springMessageText("idp.logo.alt-text", "logo")">
-        </header>
+  <div class="container">
+    #parse("header.vm")
+    <div class="row justify-content-center">
+      <div class="col-md-9 col-lg-8 col-xl-7 ml-md-auto content shadow p-3 mb-5 bg-body rounded">
 
-        <div class="content">
-          <div class="column one">
-          
-            <h3>#springMessageText("idp.login.duoRequired", "Authentication with Duo is required for the requested service.")</h3>
+        <h3>#springMessageText("idp.login.duoRequired", "Authentication with Duo is required for the requested service.")</h3>
 
-            <noscript>#springMessageText("idp.login.duoNoScript", "The Duo service requires JavaScript.")</noscript>          
-            <script src="$request.getContextPath()$duoScriptPath"></script>
-            <iframe id="duo_iframe"
-                data-host="$duoHost"
-                data-sig-request="$duoRequest"
-                data-post-action="$flowExecutionUrl"
-                frameborder="0"
-            >
-            </iframe>
-            <form id="duo_form" method="post">
-                #parse("csrf/csrf.vm")
-                <input type="hidden" name="_eventId" value="proceed" />
-            </form>
-            
-            <h3 style="text-align: center">
-                <a href="$flowExecutionUrl&_eventId=cancel">#springMessageText("idp.login.duoCancel", "Cancel this Request")</a>
-            </h3>
-          </div>
-          <div class="column two">
-            <ul class="list list-help">
-              <li class="list-help-item"><a href="#springMessageText("idp.url.helpdesk", '#')"><span class="item-marker">&rsaquo;</span> #springMessageText("idp.login.needHelp", "Need Help?")</a></li>
-            </ul>
-          </div>
-        </div>
+        <noscript>#springMessageText("idp.login.duoNoScript", "The Duo service requires JavaScript.")</noscript>
+        <script src="$request.getContextPath()$duoScriptPath"></script>
+        <iframe id="duo_iframe" data-host="$duoHost" data-sig-request="$duoRequest" data-post-action="$flowExecutionUrl" frameborder="0">
+        </iframe>
+        <form id="duo_form" method="post">
+          #parse("csrf/csrf.vm")
+          <input type="hidden" name="_eventId" value="proceed" />
+        </form>
+
+        <h3 style="text-align: center">
+          <a href="$flowExecutionUrl&_eventId=cancel">#springMessageText("idp.login.duoCancel", "Cancel this Request")</a>
+        </h3>
       </div>
-
-      <footer>
-        <div class="container container-footer">
-          <p class="footer-text">#springMessageText("idp.footer", "Insert your footer text here.")</p>
-        </div>
-      </footer>
     </div>
+    #parse("footer.vm")
+  </div>
 </body>
+
 </html>

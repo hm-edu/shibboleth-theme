@@ -20,7 +20,9 @@
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1.0">
         <title>$title - $titleSuffix</title>
-        <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/main.css">
+        <script src="$request.getContextPath()/js/dark-mode-switch.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/dark.css">
         <script>
         <!--
         #include( "client-storage/local-storage-write.js" )
@@ -28,26 +30,26 @@
         </script>
     </head>
     <body onload="doSave()">
-        <div class="wrapper">
-            <div class="container">
-                <header>
-                    <h3>$title - $titleSuffix</h3>
-                </header>
-                <div class="content">
-                $springMacroRequestContext.getMessage("idp.client-storage-write.text", "Saving login session information to the browser...")
+        <div class="container">
+            
+            #parse("header.vm")
+            <div class="row justify-content-center">
+                <div class="col-md-9 col-lg-8 col-xl-7 ml-md-auto content shadow p-3 mb-5 bg-body rounded">
+                
+                    <header>
+                        <h3>$title - $titleSuffix</h3>
+                    </header>
+                    $springMacroRequestContext.getMessage("idp.client-storage-write.text", "Saving login session information to the browser...")
+                
+                    <noscript>
+                        <div class="content">
+                        $springMacroRequestContext.getMessage("idp.client-storage.no-js", "Since your browser does not support JavaScript, you must press the Continue button once to proceed.")
+                        </div>
+                    </noscript>
                 </div>
-                <noscript>
-                    <div class="content">
-                    $springMacroRequestContext.getMessage("idp.client-storage.no-js", "Since your browser does not support JavaScript, you must press the Continue button once to proceed.")
-                    </div>
-                </noscript>
-                #parse( "client-storage/write.vm" )
             </div>
-            <footer>
-                <div class="container container-footer">
-                    <p class="footer-text">#springMessageText("idp.footer", "Insert your footer text here.")</p>
-                </div>
-            </footer>
+            #parse( "client-storage/write.vm" )
+            #parse("footer.vm")
         </div>
     </body>
 </html>
