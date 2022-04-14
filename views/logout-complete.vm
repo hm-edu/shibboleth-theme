@@ -25,14 +25,14 @@
   <title>#springMessageText("idp.title", "Web Login Service")</title>
   <script src="$request.getContextPath()/js/dark-mode-switch.min.js"></script>
   <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/bootstrap.min.css">
-  <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/dark.css">
+  <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/hm.css">
 </head>
 
 <body>
   <div class="container">
     #parse("header.vm")
     <div class="row justify-content-center">
-      <div class="col-md-9 col-lg-8 col-xl-7 ml-md-auto content shadow p-3 mb-5 bg-body rounded">
+      <div class="col-md-9 col-lg-8 col-xl-7 ml-md-auto p-3 mb-2">
         #if ($activeIdPSessions)
         <p>#springMessageText("idp.logout.cancelled", "Logout has been cancelled.")</p>
         #elseif ($activeSPSessions)
@@ -40,7 +40,19 @@
         #else
         <p>#springMessageText("idp.logout.complete", "The logout operation is complete, and no other services appear to have been accessed during this session.")</p>
         #end
-
+        <ol>
+          #foreach ($sp in $logoutContext.getSessionMap().keySet())
+            #set ($rpCtx = $multiRPContext.getRelyingPartyContextById($sp))
+            #if ($rpCtx)
+              #set ($rpUIContext = $rpCtx.getSubcontext("net.shibboleth.idp.ui.context.RelyingPartyUIContext"))
+            #end
+            #if ($rpUIContext and $rpUIContext.getServiceName())
+              <li>$encoder.encodeForHTML($rpUIContext.getServiceName())</li>
+            #else
+              <li>$encoder.encodeForHTML($sp)</li>
+            #end
+          #end
+        </ol>
       </div>
     </div>
     #parse("footer.vm")

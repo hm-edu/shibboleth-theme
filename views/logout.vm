@@ -22,100 +22,72 @@
 #set ($promptForSP = $logoutContext and !$logoutContext.getSessionMap().isEmpty())
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width,initial-scale=1.0">
-        #*
-        #if ($promptForSP)
-            <meta http-equiv="refresh" content="10;url=$flowExecutionUrl&_eventId=propagate">
-        #elseif ($promptForIdP)
-            <meta http-equiv="refresh" content="10;url=$flowExecutionUrl&_eventId=local">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  #*
+  #if ($promptForSP)
+  <meta http-equiv="refresh" content="10;url=$flowExecutionUrl&_eventId=propagate">
+  #elseif ($promptForIdP)
+  <meta http-equiv="refresh" content="10;url=$flowExecutionUrl&_eventId=local">
+  #end
+  *#
+  <title>#springMessageText("idp.title", "Web Login Service")</title>
+  <script src="$request.getContextPath()/js/dark-mode-switch.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/hm.css">
+</head>
+
+<body>
+  <div class="container">
+    #parse("header.vm")
+    <div class="row justify-content-center">
+      <div class="col-md-9 col-lg-8 col-xl-7 ml-md-auto p-3 mb-2">
+        #if ( $logoutContext and !$logoutContext.getSessionMap().isEmpty() )
+        <p>#springMessageText("idp.logout.ask", "Would you like to attempt to log out of all services accessed during your session? Please select <strong>Yes</strong> or <strong>No</strong> to ensure the logout operation completes, or wait a few seconds for Yes.")</p>
+        <br>
+
+        <form id="propagate_form" method="POST" action="$flowExecutionUrl">
+          <button id="propagate_yes" type="submit" class="btn btn-success" name="_eventId"
+            value="propagate">#springMessageText("idp.logout.button.yes", "Yes") </button>
+          <br>
+          <button id="propagate_no" style="margin-top:10px" class="btn btn-danger" type="submit" name="_eventId"
+            value="end">#springMessageText("idp.logout.button.no", "No")</button>
+        </form>
+
+        <br>
+        <p>#springMessageText("idp.logout.contactServices", "If you proceed, the system will attempt to contact the following services:")</p>
+        <ol>
+          #foreach ($sp in $logoutContext.getSessionMap().keySet())
+          #set ($rpCtx = $multiRPContext.getRelyingPartyContextById($sp))
+          #if ($rpCtx)
+          #set ($rpUIContext = $rpCtx.getSubcontext("net.shibboleth.idp.ui.context.RelyingPartyUIContext"))
+          #end
+          #if ($rpUIContext and $rpUIContext.getServiceName())
+          <li>$encoder.encodeForHTML($rpUIContext.getServiceName())</li>
+          #else
+          <li>$encoder.encodeForHTML($sp)</li>
+          #end
+          #end
+        </ol>
+        #else
+        <p><strong>#springMessageText("idp.logout.complete", "The logout operation is complete, and no other services
+            appear to have been accessed during this session.")</strong></p>
+        <hr>
+        <p><strong>#springMessageText("idp.logout.complete.hint", "For security reasons we recommend that you close this
+            browser and not use it for further internet browsing. Taking this precaution is especially relevant when
+            browsing from public computers in libraries, computer rooms and internet caf&eacute;s. ")</strong></p>
+        <!-- Complete the flow by adding a hidden iframe. -->
+        <iframe style="display:none" src="$flowExecutionUrl&_eventId=proceed"></iframe>
         #end
-        *#
-        <title>#springMessageText("idp.title", "Web Login Service")</title>
-        <script src="$request.getContextPath()/js/dark-mode-switch.min.js"></script>
-        <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/bootstrap.min.css">
-        <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/dark.css">
-    </head>
-
-    <body>
-      <div class="container">
-        #parse("header.vm")
-        <div class="row justify-content-center">
-          <div class="col-md-9 col-lg-8 col-xl-7 ml-md-auto content shadow p-3 mb-5 bg-body rounded">
-            <p>This page is displayed when a logout operation at the Identity Provider completes. This page is an example
-            and should be customized. It is not fully internationalized because the presentation will be a highly localized
-            decision, and we don't have a good suggestion for a default.</p>
-            <br>
-    
-            #if ($rpContext)
-              <p>#springMessageText("idp.logout.sp-initiated", "You have been logged out of the following service:")</p>
-              <blockquote>
-              #if ($rpUIContext)
-                  $encoder.encodeForHTML($rpUIContext.getServiceName())
-              #else
-                  $encoder.encodeForHTML($rpContext.getRelyingPartyId())
-              #end
-              </blockquote>
-              <br>
-            #end
-            
-            #if ($promptForIdP or $promptForSP)
-              <p>#springMessageText("idp.logout.prompt", "Choose one of the following, or wait a few seconds for the default.")</p>
-              <br>
-
-              <form id="propagate_form" method="POST" action="$flowExecutionUrl">
-                
-                <div class="form-element-wrapper">
-                  <button id="logout_local" class="btn btn-primary" type="submit" name="_eventId" value="local">#springMessageText("idp.logout.idponly", "Logout Locally")</button>
-                  <p>#springMessageText("idp.logout.idponly.caption", "End your SSO session.")</p>
-                </div>
-            #end
-
-            #if ($promptForSP)
-                <div class="form-element-wrapper">
-                  <button id="logout_propagate" class="btn btn-primary" type="submit" name="_eventId" value="propagate">#springMessageText("idp.logout.global", "Logout Globally")</button>
-                  <p>#springMessageText("idp.logout.global.caption", "End your SSO session and attempt logout of services accessed during session.")</p>
-                  <br>
-                  <p>#springMessageText("idp.logout.contactServices", "If instructed, the system will attempt to contact the following services:")</p>
-                  <ol>
-                  #foreach ($sp in $logoutContext.getSessionMap().keySet())
-                    #set ($rpCtx = $multiRPContext.getRelyingPartyContextById($sp))
-                    #if ($rpCtx)
-                      #set ($rpUIContext = $rpCtx.getSubcontext("net.shibboleth.idp.ui.context.RelyingPartyUIContext"))
-                    #end
-                    #if ($rpUIContext and $rpUIContext.getServiceName())
-                      <li>$encoder.encodeForHTML($rpUIContext.getServiceName())</li>
-                    #else
-                      <li>$encoder.encodeForHTML($sp)</li>
-                    #end
-                  #end
-                  </ol>
-                  <br>
-                </div>
-            #end
-
-            #if ($promptForIdP)
-                <div class="form-element-wrapper">
-                  <button id="logout_cancel" class="btn btn-primary" type="submit" name="_eventId" value="end">#springMessageText("idp.logout.cancel", "Cancel")</button>
-                  <p>#springMessageText("idp.logout.cancel.caption", "Cancel logout and retain your SSO session.")</p>
-                </div>
-            #end
-            
-            #if ($promptForIdP or $promptForSP)
-              </form>
-            #else
-                <p><strong>#springMessageText("idp.logout.complete", "The logout operation is complete, and no other services appear to have been accessed during this session.")</strong></p>
-                <!-- Complete the flow by adding a hidden iframe. -->
-                <iframe style="display:none" src="$flowExecutionUrl&_eventId=proceed"></iframe>
-            #end
-
-          </div>
-        </div>
-        #parse("footer.vm")
       </div>
+    </div>
+    #parse("footer.vm")
+  </div>
 
-      
-    
-  </body>
+
+
+</body>
+
 </html>

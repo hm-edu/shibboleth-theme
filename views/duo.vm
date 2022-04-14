@@ -28,7 +28,7 @@
   <title>#springMessageText("idp.title", "Web Login Service")</title>
   <script src="$request.getContextPath()/js/dark-mode-switch.min.js"></script>
   <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/bootstrap.min.css">
-  <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/dark.css">
+  <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/hm.css">
   <style>
     #duo_iframe {
       width: 100%;
@@ -43,7 +43,7 @@
   <div class="container">
     #parse("header.vm")
     <div class="row justify-content-center">
-      <div class="col-md-9 col-lg-8 col-xl-7 ml-md-auto content shadow p-3 mb-5 bg-body rounded">
+      <div class="col-md-9 col-lg-8 col-xl-7 ml-md-auto p-3 mb-2">
 
         <h3>#springMessageText("idp.login.duoRequired", "Authentication with Duo is required for the requested service.")</h3>
 

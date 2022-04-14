@@ -33,7 +33,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <script src="$request.getContextPath()/js/dark-mode-switch.min.js"></script>
     <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/dark.css">
+    <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/hm.css">
     <title>#springMessageText("idp.attribute-release.title", "Information Release")</title>
 </head>
 
@@ -42,7 +42,7 @@
         <div class="row justify-content-center">
             #parse("header.vm")
 
-            <div class="col-md-9 col-lg-8 col-xl-7 ml-md-auto content shadow p-3 mb-5 bg-body rounded">
+            <div class="col-md-9 col-lg-8 col-xl-7 ml-md-auto p-3 mb-2">
                 <form action="$flowExecutionUrl" method="post" style="padding:10px">
                     #parse("csrf/csrf.vm")
                     <div class="box">
@@ -134,8 +134,7 @@
                                     for="_shib_idp_doNotRememberConsent">#springMessageText("idp.attribute-release.doNotRememberConsent",
                                     "Ask me again at next login")</label>
                             
-                                #springMessageText("idp.attribute-release.doNotRememberConsentItem", "I agree to
-                                    send my information this time.")
+                                #springMessageText("idp.attribute-release.doNotRememberConsentItem", "I agree to send my information this time.")
                             
                             </div>
                             #end
@@ -160,9 +159,7 @@
                                     for="_shib_idp_globalConsent">#springMessageText("idp.attribute-release.globalConsent",
                                     "Do not ask me again")</label>
                             
-                               #springMessageText("idp.attribute-release.globalConsentItem", "I agree that
-                                    <strong>all</strong> of my information will be released to <strong>any</strong>
-                                    service.")
+                               #springMessageText("idp.attribute-release.globalConsentItem", "I agree that <strong>all</strong> of my information will be released to <strong>any</strong> service.")
                             </div>
                             #end
                             #if ($attributeReleaseFlowDescriptor.doNotRememberConsentAllowed ||
@@ -171,7 +168,7 @@
                             at any time with the checkbox on the login page.")
                         </div>
                         #end
-                        <div class="d-grid gap-2 justify-content-md-end d-md-flex">
+                        <div class="d-grid gap-2 mt-2 justify-content-lg-center d-lg-flex">
                             <input type="submit" name="_eventId_proceed" value="#springMessageText("idp.attribute-release.accept", "Accept" )" class="btn btn-success">
                             <input type="submit" name="_eventId_AttributeReleaseRejected" value="#springMessageText("idp.attribute-release.reject", "Reject" )" class="btn btn-danger">
                         </div>

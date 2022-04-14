@@ -21,14 +21,14 @@
   <title>#springMessageText("idp.title", "Web Login Sevice") - #springMessageText("${eventKey}.title", "Error")</title>
   <script src="$request.getContextPath()/js/dark-mode-switch.min.js"></script>
   <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/bootstrap.min.css">
-  <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/dark.css">
+  <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/hm.css">
 </head>
 
 <body onload="window.location = '$errorUrl'">
   <div class="container">
     #parse("header.vm")
     <div class="row justify-content-center">
-      <div class="col-md-9 col-lg-8 col-xl-7 ml-md-auto content shadow p-3 mb-5 bg-body rounded">
+      <div class="col-md-9 col-lg-8 col-xl-7 ml-md-auto p-3 mb-2">
         #springMessageText("${eventKey}.message", "Your web browser doesn't support authentication with your desktop login credentials.")
         <ul class="list list-help">
           <li class="list-help-item">
