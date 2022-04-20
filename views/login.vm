@@ -28,15 +28,7 @@
 ##
 ##set ($url = $request.getRequestURL())
 #set ($url = $flowRequestContext.getFlowExecutionUrl())
-##set ($langFromContext = $httpUtil.getParameter($url, "lang", false))
-#set ($langFromContext = $request.getParameter("lang"))
-#set ($langDeParam = 'de')
-#set ($langEnParam = 'en')
-#set ($urlEn = $url + '&' + 'lang' + '=' + $langEnParam)
-#set ($urlDe = $url + '&' + 'lang' + '=' + $langDeParam)
-#set($referrer = $request.getHeader('referer'))
-#set($idpEntityId = $environment.getProperty("idp.entityID","default"))
-##
+
 <!DOCTYPE html>
 <html>
 
