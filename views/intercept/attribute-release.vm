@@ -169,8 +169,8 @@
                         </div>
                         #end
                         <div class="d-grid gap-2 mt-2 justify-content-lg-center d-lg-flex">
-                            <input type="submit" name="_eventId_proceed" value="#springMessageText("idp.attribute-release.accept", "Accept" )" class="btn btn-success">
-                            <input type="submit" name="_eventId_AttributeReleaseRejected" value="#springMessageText("idp.attribute-release.reject", "Reject" )" class="btn btn-danger">
+                            <input type="submit" name="_eventId_proceed" value="#springMessageText("idp.attribute-release.accept", "Accept" )" class="btn btn-hm">
+                            <input type="submit" name="_eventId_AttributeReleaseRejected" value="#springMessageText("idp.attribute-release.reject", "Reject" )" class="btn btn-hm">
                         </div>
                     </div>
                 </form>

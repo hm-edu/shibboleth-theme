@@ -49,10 +49,10 @@
         <br>
 
         <form id="propagate_form" method="POST" action="$flowExecutionUrl">
-          <button id="propagate_yes" type="submit" class="btn btn-success" name="_eventId"
+          <button id="propagate_yes" type="submit" class="btn btn-hm" name="_eventId"
             value="propagate">#springMessageText("idp.logout.button.yes", "Yes") </button>
           <br>
-          <button id="propagate_no" style="margin-top:10px" class="btn btn-danger" type="submit" name="_eventId"
+          <button id="propagate_no" style="margin-top:10px" class="btn btn-hm" type="submit" name="_eventId"
             value="end">#springMessageText("idp.logout.button.no", "No")</button>
         </form>
 

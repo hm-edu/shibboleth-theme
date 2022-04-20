@@ -55,6 +55,11 @@ form>.form-control+.form-control {
     border: #161616 1px solid;
 }
 
+.form-check-input:checked{
+    background-color: #3D46D9;
+    border-color: #3D46D9;
+}
+
 .btn-hm:hover {
     background-color: #3D46D9;
     color: #f4f4f4;
