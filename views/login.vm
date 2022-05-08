@@ -28,7 +28,15 @@
 ##
 ##set ($url = $request.getRequestURL())
 #set ($url = $flowRequestContext.getFlowExecutionUrl())
-
+##set ($langFromContext = $httpUtil.getParameter($url, "lang", false))
+#set ($langFromContext = $request.getParameter("lang"))
+#set ($langDeParam = 'de')
+#set ($langEnParam = 'en')
+#set ($urlEn = $url + '&' + 'lang' + '=' + $langEnParam)
+#set ($urlDe = $url + '&' + 'lang' + '=' + $langDeParam)
+#set($referrer = $request.getHeader('referer'))
+#set($idpEntityId = $environment.getProperty("idp.entityID","default"))
+##
 <!DOCTYPE html>
 <html>
 
@@ -83,7 +91,7 @@
 
 
     <div class="row justify-content-center">
-      <div class="col-md-9 col-lg-8 col-xl-7 ml-md-auto p-3 mb-2">        
+      <div class="col-md-7 col-lg-6 col-xl-5  ml-md-auto mb-2">        
         #parse("login-error.vm")
         <form action="$flowExecutionUrl" method="post" class="mb-1">
           #parse("csrf/csrf.vm")
@@ -127,14 +135,31 @@
           
         #end
         
-        <div>
-          <a href="#abuse" data-bs-toggle="collapse" aria-expanded="false" aria-controls="abuse">#springMessageText("idp.login.prevent-abuse.title","")</a>
+        <div class="collapse-arrow">
+          <a href="#abuse" data-bs-toggle="collapse" aria-expanded="false" class="collapsed"
+            aria-controls="abuse">#springMessageText("idp.login.prevent-abuse.title","")
+            <span class="icon">
+              <svg class="arrow" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                x="0px" y="0px" width="14px" height="14px" viewBox="0 0 451.847 451.847" tyle="enable-background:new 0 0 451.847 451.847;" xml:space="preserve">
+                <g>
+                  <path
+                    d="M225.923,354.706c-8.098,0-16.195-3.092-22.369-9.263L9.27,151.157c-12.359-12.359-12.359-32.397,0-44.751
+                                        c12.354-12.354,32.388-12.354,44.748,0l171.905,171.915l171.906-171.909c12.359-12.354,32.391-12.354,44.744,0
+                                        c12.365,12.354,12.365,32.392,0,44.751L248.292,345.449C242.115,351.621,234.018,354.706,225.923,354.706z" />
+                </g>
+              </svg>
+            </span>
+          </a>
           <div class="collapse" id="abuse">#springMessageText("idp.login.prevent-abuse.message","")</div>
         </div>
       </div>
       
     </div>
-    #parse("footer.vm")
+    <div class="row justify-content-center">
+      <div class="col-md-7 col-lg-6 col-xl-5  mb-1 ml-md-auto">
+        #parse("footer.vm")
+      </div>
+    </div>
   </div>
 
 </body>

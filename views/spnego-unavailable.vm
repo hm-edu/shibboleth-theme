@@ -28,7 +28,7 @@
   <div class="container">
     #parse("header.vm")
     <div class="row justify-content-center">
-      <div class="col-md-9 col-lg-8 col-xl-7 ml-md-auto p-3 mb-2">
+      <div class="col-md-8 col-lg-7 col-xl-6 ml-md-auto mb-2">
         #springMessageText("${eventKey}.message", "Your web browser doesn't support authentication with your desktop login credentials.")
         <ul class="list list-help">
           <li class="list-help-item">
@@ -38,7 +38,11 @@
         </ul>
       </div>
     </div>
-    #parse("footer.vm")
+    <div class="row justify-content-center">
+      <div class="col-md-8 col-lg-7 col-xl-6 mb-1 ml-md-auto">
+        #parse("footer.vm")
+      </div>
+    </div>
   </div>
 
 </body>

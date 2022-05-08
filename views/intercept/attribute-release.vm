@@ -32,6 +32,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <script src="$request.getContextPath()/js/dark-mode-switch.min.js"></script>
+    <script src="$request.getContextPath()/js/bootstrap.min.js"></script>
     <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/hm.css">
     <title>#springMessageText("idp.attribute-release.title", "Information Release")</title>
@@ -39,11 +40,11 @@
 
 <body>
     <div class="container">
+        #parse("header-small.vm")
         <div class="row justify-content-center">
-            #parse("header.vm")
 
-            <div class="col-md-9 col-lg-8 col-xl-7 ml-md-auto p-3 mb-2">
-                <form action="$flowExecutionUrl" method="post" style="padding:10px">
+            <div class="col-md-8 col-lg-7 col-xl-6 ml-md-auto mb-2">
+                <form action="$flowExecutionUrl" method="post">
                     #parse("csrf/csrf.vm")
                     <div class="box">
                         <header>
@@ -53,21 +54,43 @@
                             #end
                         </header>
                         #if ($serviceName)
-                        <p>
-                            #springMessageText("idp.attribute-release.serviceNameLabel", "You are about to access the service:")<br>
-                            <span class="service_name">$serviceName</span>
+                        
+                           
+                            
+                            #if ($serviceDescription)
+                            <div class="collapse-arrow">
+                                #springMessageText("idp.attribute-release.serviceNameLabel", "You are about to access the service:")<br>
+                                <a href="#description" data-bs-toggle="collapse" aria-expanded="false" class="collapsed"
+                                aria-controls="description">$serviceName
+                                <span class="icon">
+                                  <svg class="arrow" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                                    x="0px" y="0px" width="14px" height="14px" viewBox="0 0 451.847 451.847" tyle="enable-background:new 0 0 451.847 451.847;" xml:space="preserve">
+                                    <g>
+                                      <path
+                                        d="M225.923,354.706c-8.098,0-16.195-3.092-22.369-9.263L9.27,151.157c-12.359-12.359-12.359-32.397,0-44.751
+                                                            c12.354-12.354,32.388-12.354,44.748,0l171.905,171.915l171.906-171.909c12.359-12.354,32.391-12.354,44.744,0
+                                                            c12.365,12.354,12.365,32.392,0,44.751L248.292,345.449C242.115,351.621,234.018,354.706,225.923,354.706z" />
+                                    </g>
+                                  </svg>
+                                </span>
+                              </a>
+                              <div class="collapse" id="description">
+                                  #springMessageText("idp.attribute-release.serviceDescriptionLabel", "Description as provided by this service:")<br>
+                                <span class="service_description">$encoder.encodeForHTML($serviceDescription)</span></div>
+                                
+                            </p>
+                            </div>
+                            #else
+                                <p>#springMessageText("idp.attribute-release.serviceNameLabel", "You are about to access the service:")<br>
+                                <span class="service_name">$serviceName</span>
+                                </p>
+                            #end
+
                             #if ($rpOrganizationName) 
                                 #springMessageText("idp.attribute-release.of", "of") <span class="organization_name">$encoder.encodeForHTML($rpOrganizationName)</span>
                             #end
-                        </p>
                         #end
-                        #if ($serviceDescription)
-                        <p>
-                            #springMessageText("idp.attribute-release.serviceDescriptionLabel", "Description as provided by this service:")<br>
-                            <span class="service_description">$encoder.encodeForHTML($serviceDescription)</span>
-                            <br>
-                        </p>
-                        #end
+                       
                         #if ($informationURL)
                         <p>
                             <a href="$informationURL">#springMessageText("idp.attribute-release.informationURLLabel", "Additional information about the service")</a>
@@ -176,7 +199,11 @@
                 </form>
             </div>
 
-            #parse("footer.vm")
+            <div class="row justify-content-center">
+                <div class="col-md-8 col-lg-7 col-xl-6 mb-1 ml-md-auto">
+                    #parse("footer.vm")
+                </div>
+            </div>
         </div>
     </div>
 </body>

@@ -30,9 +30,9 @@
 
 <body>
   <div class="container">
-    #parse("header.vm")
+    #parse("header-small.vm")
     <div class="row justify-content-center">
-      <div class="col-md-9 col-lg-8 col-xl-7 ml-md-auto p-3 mb-2">
+      <div class="col-md-8 col-lg-7 col-xl-6 ml-md-auto mb-2">
         #if ($activeIdPSessions)
         <p>#springMessageText("idp.logout.cancelled", "Logout has been cancelled.")</p>
         #elseif ($activeSPSessions)
@@ -55,7 +55,11 @@
         </ol>
       </div>
     </div>
-    #parse("footer.vm")
+    <div class="row justify-content-center">
+      <div class="col-md-8 col-lg-7 col-xl-6 mb-1 ml-md-auto">
+        #parse("footer.vm")
+      </div>
+    </div>
   </div>
 
   <!-- If SAML logout, complete the flow by adding a hidden iframe. -->

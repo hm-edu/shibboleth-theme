@@ -6,10 +6,18 @@ body {
     display: flex;
     align-items: center;
 }
+#logoSmall {
+    content:url("/idp/images/HM_Logo_rot_RGB.svg");   
+    max-width: 250px;
+}
+
+[data-theme="dark"] #logoSmall {
+    content:url("/idp/images/HM_Logo_weiss_RGB.svg");   
+}
 
 #logo {
-    fill: #FC5555;
-    max-width: 80%;
+    content:url("/idp/images/HM_Schriftzug_Logo_rot_RGB.svg");   
+    width: 100%;
 }
 
 form>.form-control+.form-control {
@@ -47,7 +55,12 @@ form>.form-control+.form-control {
 }
 
 [data-theme="dark"] #logo {
-    fill: #fff;
+    content:url("/idp/images/HM_Schriftzug_Logo_weiss_RGB.svg");
+    width: 100%;
+}
+
+.alert {
+    border-radius: 0;
 }
 
 .btn-hm {
@@ -55,7 +68,7 @@ form>.form-control+.form-control {
     border: #161616 1px solid;
 }
 
-.form-check-input:checked{
+.form-check-input:checked {
     background-color: #3D46D9;
     border-color: #3D46D9;
 }
@@ -96,7 +109,20 @@ a:visited {
     color: #3D46D9;
 }
 
-[dark-theme="dark"] a:visited {
-    background-color: white !important;
-    color: #804180 !important;
+.collapse-arrow .icon {
+    transform: rotate(-90deg);
+    transition: .3s transform ease-in-out;
+    display: inline-block;
+}
+
+.collapse-arrow .collapsed .icon {
+    transform: rotate(0deg);
+}
+
+[data-theme="dark"] .arrow {
+    fill: #fff !important;
+}
+
+[data-theme="dark"] .arrow:hover {
+    fill: black !important;
 }

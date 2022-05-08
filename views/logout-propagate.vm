@@ -29,15 +29,18 @@
     </head>
 
     <body>
-      <div class="container">
-        #parse("header.vm")
+      <div class="container">#parse("header-small.vm")
         <div class="row justify-content-center">
-          <div class="col-md-9 col-lg-8 col-xl-7 ml-md-auto p-3 mb-2">
+          <div class="col-md-8 col-lg-7 col-xl-6 ml-md-auto mb-2">
               <p>#springMessageText("idp.logout.attempt", "Attempting to log out of the following services:")</p>
               #parse("logout/propagate.vm")
           </div>
         </div>
-        #parse("footer.vm")
+        <div class="row justify-content-center">
+          <div class="col-md-8 col-lg-7 col-xl-6 mb-1 ml-md-auto">
+            #parse("footer.vm")
+          </div>
+        </div>
       </div>        
  	</body>
 </html>
