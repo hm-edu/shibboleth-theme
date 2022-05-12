@@ -47,16 +47,7 @@
                 <form action="$flowExecutionUrl" method="post">
                     #parse("csrf/csrf.vm")
                     <div class="box">
-                        <header>
-                            #if ($rpOrganizationLogo)
-                            <img src="$encoder.encodeForHTMLAttribute($rpOrganizationLogo)"
-                                alt="logo for $encoder.encodeForHTMLAttribute($serviceName)" class="organization_logo">
-                            #end
-                        </header>
                         #if ($serviceName)
-                        
-                           
-                            
                             #if ($serviceDescription)
                             <div class="collapse-arrow">
                                 #springMessageText("idp.attribute-release.serviceNameLabel", "You are about to access the service:")<br>
