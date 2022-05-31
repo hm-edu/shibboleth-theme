@@ -129,8 +129,17 @@
         </form>
 
         #if ($passwordEnabled)
-        <div class="mb-2">
+        <div class="mb-2 d-flex justify-content-between">
             #springMessageText("idp.login.forgotPassword.message","")
+
+            #if (!$langFromContext)
+            <a href="$encoder.encodeForHTML($urlEn)"> #springMessageText("idp.login.langUrlDesc", "EN")</a>
+            #elseif ($langFromContext == 'en')
+            <a href="$encoder.encodeForHTML($urlDe)"> #springMessageText("idp.login.langUrlDesc", "DE")</a>
+            #elseif ($langFromContext == 'de')
+            <a href="$encoder.encodeForHTML($urlEn)"> #springMessageText("idp.login.langUrlDesc", "EN")</a>
+            #end
+
         </div>
           
         #end
