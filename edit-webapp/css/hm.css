@@ -1,4 +1,5 @@
 body {
+    background-color: white;
     font-size: 0.9em;
     color: #161616;
     min-height: 100%;
@@ -6,18 +7,21 @@ body {
     display: flex;
     align-items: center;
 }
+
 #logoSmall {
-    content:url("/idp/images/HM_Logo_rot_RGB.svg");   
     max-width: 250px;
 }
 
-[data-theme="dark"] #logoSmall {
-    content:url("/idp/images/HM_Logo_weiss_RGB.svg");   
+#logoSmall::before {
+    content: url("/idp/images/HM_Logo_rot_RGB.svg");
 }
 
 #logo {
-    content:url("/idp/images/HM_Schriftzug_Logo_rot_RGB.svg");   
     width: 100%;
+}
+
+#logo::before {
+    content: url("/idp/images/HM_Schriftzug_Logo_rot_RGB.svg");
 }
 
 form>.form-control+.form-control {
@@ -37,7 +41,7 @@ form>.form-control+.form-control {
 }
 
 [data-theme="dark"] {
-    background-color: #161616 !important;
+    background-color: #161616;
     color: #f4f4f4;
 }
 
@@ -54,9 +58,12 @@ form>.form-control+.form-control {
     background-color: #161616 !important;
 }
 
-[data-theme="dark"] #logo {
-    content:url("/idp/images/HM_Schriftzug_Logo_weiss_RGB.svg");
-    width: 100%;
+[data-theme="dark"] #logoSmall::before {
+    content: url("/idp/images/HM_Logo_weiss_RGB.svg");
+}
+
+[data-theme="dark"] #logo::before {
+    content: url("/idp/images/HM_Schriftzug_Logo_weiss_RGB.svg");
 }
 
 .alert {

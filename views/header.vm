@@ -1,5 +1,5 @@
 <div class="row justify-content-center">
-    <div class="d-flex col-md-7 col-lg-6 col-xl-5  justify-content-center">
-         <img id="logo"/>
+    <div class="d-flex col-md-7 col-lg-6 col-xl-5 justify-content-center">
+        <div id="logo"></div>
     </div>
 </div>
