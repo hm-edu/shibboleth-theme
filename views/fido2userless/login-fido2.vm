@@ -1,0 +1,133 @@
+#set ($webAuthnCredentialRequestOptions = $custom.get("fido2userless.ChallengeGenerationStrategy").apply($profileRequestContext))
+#if ($webAuthnCredentialRequestOptions)
+    #set ($webAuthnRpId = $webAuthnCredentialRequestOptions.getRpId())
+    #set ($webAuthnTimeout = $webAuthnCredentialRequestOptions.getTimeout())
+    #set ($webAuthnChallenge = $webAuthnCredentialRequestOptions.getChallenge())
+    #set ($webAuthnUserVerificationType = $webAuthnCredentialRequestOptions.getUserVerificationType())
+    <script type="text/javascript">
+        abortController = new AbortController();
+        abortSignal = abortController.signal;
+
+        const translationString = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+
+        function base64ToWebSafeBase64(base64) {
+            return base64.replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "");;
+        }
+
+        function unit8ArrayToUrlSafeBase64(unit8Array) {
+            const extraBytes = unit8Array.length % 3
+            let output = ''
+            let buffer
+
+            function encode(pos) {
+                return translationString.charAt(pos)
+            }
+
+            function threeBytesToBase64(threeBytes) {
+                return encode(threeBytes >> 18) + encode(threeBytes >> 12 & 0x3F) + encode(threeBytes >> 6 & 0x3F) + encode(threeBytes & 0x3F)
+            }
+
+            for (let i = 0, length = unit8Array.length - extraBytes; i < length; i += 3) {
+                buffer = (unit8Array[i] << 16) + (unit8Array[i + 1] << 8) + (unit8Array[i + 2])
+                output += threeBytesToBase64(buffer)
+            }
+
+            // pad the end with zeros, but make sure to not forget the extra bytes
+            switch (extraBytes) {
+                case 1:
+                    buffer = unit8Array[unit8Array.length - 1]
+                    output = output + encode(buffer >> 2) + encode((buffer << 4) & 0x3F) + '=='
+                    break
+                case 2:
+                    buffer = (unit8Array[unit8Array.length - 2] << 8) + (unit8Array[unit8Array.length - 1])
+                    output = output + encode(buffer >> 10) + encode((buffer >> 4) & 0x3F) + encode((buffer << 2) & 0x3F) + '='
+                    break
+                default:
+                    break
+            }
+
+            return base64ToWebSafeBase64(output);
+        }
+
+        function webSafeBase64ToBase64(webSafeBase64) {
+            let base64 = webSafeBase64.replaceAll('-', '+').replaceAll('_', '/');
+            while (base64.length % 4)
+                base64 += '=';
+            return base64;
+        }
+
+        let challenge = Uint8Array.from(atob(webSafeBase64ToBase64("$webAuthnChallenge")), c => c.charCodeAt(0));
+        if (!PublicKeyCredential.isConditionalMediationAvailable ||
+                !PublicKeyCredential.isConditionalMediationAvailable()) {
+            console.log("FIDO2 Conditional UI not supported.")
+        } else {
+            window.addEventListener('load', function () {
+                auth("conditional");
+            });
+        }
+
+        /**
+         * @param {string} method
+         */
+        function auth(method) {
+            abortController = new AbortController();
+            abortSignal = abortController.signal;
+            const options = {
+                signal: abortSignal,
+                publicKey: {
+                    challenge: challenge,
+                    rpId: "$webAuthnRpId",
+                    userVerification: "$webAuthnUserVerificationType"
+                }
+            };
+            if (method === "conditional") {
+                options["mediation"] = "conditional";
+            } else {
+                options["publicKey"]["timeout"] = $webAuthnTimeout;
+            }
+            return navigator.credentials.get(options).then((webAuthnAssertion)=> {
+                const userHandle = String.fromCodePoint(...new Uint8Array(webAuthnAssertion.response.userHandle));
+                const webAuthnAssertionForJson = {
+                    authenticatorData: unit8ArrayToUrlSafeBase64(new Uint8Array(webAuthnAssertion.response.authenticatorData)),
+                    clientDataJson: unit8ArrayToUrlSafeBase64(new Uint8Array(webAuthnAssertion.response.clientDataJSON)),
+                    rawId: unit8ArrayToUrlSafeBase64(new Uint8Array(webAuthnAssertion.rawId)),
+                    signature: unit8ArrayToUrlSafeBase64(new Uint8Array(webAuthnAssertion.response.signature)),
+                    userHandle: userHandle
+                };
+                const elements = document.getElementsByName("fudis_web_authn_assertion_input")[0];
+                elements.setAttribute("value", base64ToWebSafeBase64(btoa(JSON.stringify(webAuthnAssertionForJson))));
+                document.getElementById("fido2userless").click();
+            }).catch((x)=> {
+                console.error(x);
+            });
+        }
+
+        function manualPasskeyLogin(event) {
+            event.preventDefault();
+            abortController.abort();
+            auth("button").then(()=> {
+                if (!PublicKeyCredential.isConditionalMediationAvailable ||
+                        !PublicKeyCredential.isConditionalMediationAvailable()) {
+                    console.log("FIDO2 Conditional UI not supported.")
+                } else {
+                    auth("conditional");
+                }
+            });
+        }
+    </script>
+    <div class="grid">
+        <div class="grid-item">
+            <input type="text" style="display: none;" name="fudis_web_authn_assertion_input" />
+        </div>
+    </div>
+    <div class="grid">
+        <div class="grid-item">
+            <div class="d-grid gap-2 mt-2 d-md-flex justify-content-md-center">
+                <button class="btn btn-hm" onClick="manualPasskeyLogin(event)">#springMessageText("idp.fido2userless.login.login", "FIDO2 Userless")</button>
+            </div>
+            <button type="submit" style="display: none;" id="fido2userless" name="_eventId_fido2userless"
+                    onClick="this.childNodes[0].nodeValue='#springMessageText("idp.fido2userless.login.pleasewait", "Logging in, please wait...")'"
+            >#springMessageText("idp.fido2userless.login.login", "FIDO2 Userless")</button>
+        </div>
+    </div>
+#end

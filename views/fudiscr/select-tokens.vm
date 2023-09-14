@@ -1,0 +1,109 @@
+#set ($userTokenSelectionType = $challengeResponseContext.getUserTokenSelectionType())
+<div class="form-element-wrapper">
+    #if ($userTokenSelectionType.isSingleSelection())
+        #if ($userTokenSelectionType.isTokenTypeGroupSelection())
+            <div class="form-element-wrapper">
+                <legend for="fudis_selected_token_types_input">#springMessageText(
+                "fudiscr.view.select-tokens-type.message", "Please select token type.")</legend>
+                <select class="form-element form-field" id="fudis_selected_token_types_input"
+                        name="fudis_selected_token_types_input">
+                    #foreach ($type in $challengeResponseContext.getTypeToTokens().keySet())
+                        #set ($isUsersDefaultType = false)
+                        #foreach ($token in $challengeResponseContext.getTypeToTokens().get($type))
+                            #if ($token.isUsersDefault)
+                                #set ($isUsersDefaultType = true)
+                                #break
+                            #end
+                        #end
+                        #if ($isUsersDefaultType)
+                            <option value="$type.name()" selected>$type.name()</option>
+                        #else
+                            <option value="$type.name()">$type.name()</option>
+                        #end
+                    #end
+                </select>
+            </div>
+        #else
+            <div class="form-element-wrapper">
+                <legend for="fudis_selected_token_ids_input">#springMessageText(
+                "fudiscr.view.select-tokens.message", "Please select token.")</legend>
+                <select class="form-element form-field" id="fudis_selected_token_ids_input"
+                        name="fudis_selected_token_ids_input">
+                    #foreach ($token in $challengeResponseContext.getTokens())
+                        #set ($tokenLabel = "$token.getId() - $token.getType().name()")
+                        #set ($description = $token.getDescription())
+                        #if ($description)
+                            #set ($tokenLabel = "$tokenLabel - $description")
+                        #end
+                        #if ($token.isUsersDefault)
+                            <option value="$token.getId()" selected>$encoder.encodeForHTML($tokenLabel)</option>
+                        #else
+                            <option value="$token.getId()">$encoder.encodeForHTML($tokenLabel)</option>
+                        #end
+                    #end
+                </select>
+            </div>
+        #end
+    #else
+        #if ($userTokenSelectionType.isTokenTypeGroupSelection())
+            <div class="form-element-wrapper">
+                <legend for="fudis_selected_token_types_input">#springMessageText(
+                "fudiscr.view.select-tokens-types.message", "Please select token types.")</legend>
+                #foreach ($type in $challengeResponseContext.getTypeToTokens().keySet())
+                    #set ($isUsersDefaultType = false)
+                    #foreach ($token in $challengeResponseContext.getTypeToTokens().get($type))
+                        #if ($token.isUsersDefault)
+                            #set ($isUsersDefaultType = true)
+                            #break
+                        #end
+                    #end
+                    #if ($isUsersDefaultType)
+                        <nobr>
+                            <input type="checkbox" id="$type.name()" name="fudis_selected_token_types_input" value="$type.name()"
+                                   checked>
+                            <label for="$type.name()">$type.name()</label>
+                        </nobr><br/>
+                    #else
+                        <nobr>
+                            <input type="checkbox" id="$type.name()" name="fudis_selected_token_types_input" value="$type.name()">
+                            <label for="$type.name()">$type.name()</label>
+                        </nobr><br/>
+                    #end
+                #end
+            </div>
+        #else
+            <div class="form-element-wrapper">
+                <legend for="fudis_selected_token_ids_input">#springMessageText(
+                "fudiscr.view.select-tokens.message", "Please select tokens.")</legend>
+                #foreach ($token in $challengeResponseContext.getTokens())
+                    #set ($tokenLabel = "$token.getId() - $token.getType().name()")
+                    #set ($description = $token.getDescription())
+                    #if ($description)
+                        #set ($tokenLabel = "$tokenLabel - $description")
+                    #end
+                    #if ($token.isUsersDefault)
+                        <nobr>
+                            <input type="checkbox" id="$token.getId()" name="fudis_selected_token_ids_input"
+                                   value="$token.getId()" checked>
+                            <label for="$token.getId()">$encoder.encodeForHTML($tokenLabel)</label>
+                        </nobr><br/>
+                    #else
+                        <nobr>
+                            <input type="checkbox" id="$token.getId()" name="fudis_selected_token_ids_input"
+                                   value="$token.getId()">
+                            <label for="$token.getId()">$encoder.encodeForHTML($tokenLabel)</label>
+                        </nobr><br/>
+                    #end
+                #end
+            </div>
+        #end
+
+    #end
+</div>
+
+<div class="form-element-wrapper">
+    <button class="form-element form-button" type="submit" name="_eventId_proceed"
+            onClick="this.childNodes[0].nodeValue='#springMessageText(
+                "fudiscr.view.select-tokens.please-wait", "Please wait...")'"
+    >#springMessageText("fudiscr.view.select-tokens.next", "Next")</button>
+</div>

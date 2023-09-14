@@ -1,0 +1,132 @@
+## Velocity Template for with main Template
+##
+## Velocity context will contain the following properties
+## flowExecutionUrl - the form action location
+## flowRequestContext - the Spring Web Flow RequestContext
+## flowExecutionKey - the SWF execution key (this is built into the flowExecutionUrl)
+## profileRequestContext - root of context tree
+## authenticationContext - context with authentication request information
+## authenticationErrorContext - context with login error state
+## authenticationWarningContext - context with login warning state
+## rpUIContext - the context with SP UI information from the metadata
+## rpContext - RelyingPartyContext
+## challengeResponseContext - FUDIS ChallengeResponseContext
+## encoder - HTMLEncoder class
+## request - HttpServletRequest
+## response - HttpServletResponse
+## environment - Spring Environment object for property resolution
+## custom - arbitrary object injected by deployer
+##
+#set ($currentStateId = $flowRequestContext.getCurrentState().getId())
+##
+#set ($titleMessageTextProperty = "")
+#if ($currentStateId == "DisplaySelectTokensPage")
+#set ($titleMessageTextProperty = "fudiscr.view.select-tokens.title")
+#elseif ($currentStateId == "DisplayResponsePage")
+#set ($titleMessageTextProperty = "fudiscr.view.insert-response.title")
+#elseif ($currentStateId == "DisplayAuthnFailedPageNoTokenAvailable")
+#set ($titleMessageTextProperty = "fudiscr.view.failed.title")
+#elseif ($currentStateId == "DisplayAuthnFailedPageSelectedTokensNotAvailable")
+#set ($titleMessageTextProperty = "fudiscr.view.failed.title")
+#elseif ($currentStateId == "DisplayAuthnFailedPageMaxRetriesExceeded")
+#set ($titleMessageTextProperty = "fudiscr.view.failed.title")
+#elseif ($currentStateId == "DisplayRestartCRPageSelectedTokensNotAvailable")
+#set ($titleMessageTextProperty = "fudiscr.view.failed.title")
+#elseif ($currentStateId == "DisplayRestartCRPageMaxRetriesExceeded")
+#set ($titleMessageTextProperty = "fudiscr.view.failed.title")
+#end
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>#springMessageText("$titleMessageTextProperty", "Token Login Service")</title>
+    <script src="$request.getContextPath()/js/dark-mode-switch.min.js"></script>
+    <script src="$request.getContextPath()/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/hm.css">
+    <style>
+        .btn-hm {
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        #parse("header-small.vm")
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-7 col-xl-6 ml-md-auto mb-2">
+                <form id="fudiscr-form" action="$flowExecutionUrl" method="post" autocomplete="off"
+                    method="post">
+                    #parse("csrf/csrf.vm")
+                    #if ($currentStateId == "DisplaySelectTokensPage")
+                    #parse("fudiscr/select-tokens.vm")
+                    #elseif ($currentStateId == "DisplayResponsePage")
+                    #parse("fudiscr/insert-response.vm")
+                    #elseif ($currentStateId == "DisplayAuthnFailedPageNoTokenAvailable")
+                    <div class="content">
+                        #springMessageText(
+                        "fudiscr.view.failed.no_token_available.message", "Authentication failed, no valid
+                        token available.")
+                    </div>
+
+                    <div class="d-grid mb-2 gap-2 d-md-flex justify-content-md-center">
+                        <button class="form-button btn btn-hm" type="submit" name="_eventId_proceed" onClick="this.childNodes[0].nodeValue='#springMessageText(" fudiscr.view.failed.please-wait", "Reselecting authentication flow, please wait..." )'">#springMessageText("fudiscr.view.failed.next", "Next")</button>
+                    </div>
+                    #elseif ($currentStateId == "DisplayAuthnFailedPageSelectedTokensNotAvailable")
+                    <div class="content">
+                        #springMessageText(
+                        "fudiscr.view.failed.selected_tokens_not_available.message", "Authentication failed,
+                        selected tokens are not available.")
+                    </div>
+
+                    <div class="d-grid mb-2 gap-2 d-md-flex justify-content-md-center">
+                        <button class="form-button btn btn-hm" type="submit" name="_eventId_proceed" onClick="this.childNodes[0].nodeValue='#springMessageText(" fudiscr.view.failed.please-wait", "Reselecting authentication flow, please wait..." )'">#springMessageText("fudiscr.view.failed.next", "Next")</button>
+                    </div>
+                    #elseif ($currentStateId == "DisplayAuthnFailedPageMaxRetriesExceeded")
+                    <div class="content">
+                        #springMessageText(
+                        "fudiscr.view.failed.max_retries_exceeded.message", "Authentication failed, max
+                        retries exceeded.") 
+                    </div>
+
+                    <div class="d-grid mb-2 gap-2 d-md-flex justify-content-md-center">
+                        <button class="form-button btn btn-hm" type="submit" name="_eventId_proceed" onClick="this.childNodes[0].nodeValue='#springMessageText(" fudiscr.view.failed.please-wait", "Reselecting authentication flow, please wait..." )'">#springMessageText("fudiscr.view.failed.next", "Next")</button>
+                    </div>
+                    #elseif ($currentStateId == "DisplayRestartCRPageSelectedTokensNotAvailable")
+                    <div class="content">
+                        #springMessageText( "fudiscr.view.failed.selected_tokens_not_available.message", "Authentication failed, selected tokens are not available.")
+                    </div>
+
+                    <div class="d-grid mb-2 gap-2 d-md-flex justify-content-md-center">
+                        <button class="form-button btn btn-hm" type="submit" name="_eventId_proceed" onClick="this.childNodes[0].nodeValue='#springMessageText(" fudiscr.view.failed.restart.please-wait", "Restarting authentication, please wait..." )'">#springMessageText("TODO", "Restart authentication")</button>
+                    </div>
+                    #elseif ($currentStateId == "DisplayRestartCRPageMaxRetriesExceeded")
+                    <div class="content">
+                        #springMessageText("fudiscr.view.failed.max_retries_exceeded.message", "Authentication failed, max retries exceeded.")
+                    </div>
+
+                    <div class="d-grid mb-2 gap-2 d-md-flex justify-content-md-center">
+                        <button class="form-button btn btn-hm" type="submit" name="_eventId_proceed" onClick="this.childNodes[0].nodeValue='#springMessageText(" fudiscr.view.failed.restart.please-wait", "Restarting authentication, please wait..." )'">#springMessageText("fudiscr.view.failed.restart.next", "Restart authentication")</button>
+                    </div>
+                    #end
+                </form>
+
+
+            </div>
+
+            <div class="row justify-content-center">
+                <div class="col-md-8 col-lg-7 col-xl-6 mb-1 ml-md-auto">
+                    #parse("footer.vm")
+                </div>
+            </div>
+        </div>
+</body>
+</div>
+
+</body>
+
+</html>

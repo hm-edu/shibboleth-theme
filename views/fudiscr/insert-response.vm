@@ -1,0 +1,187 @@
+#set ($simple_user_input = false)
+#set ($webAuthnDescriptors = [])
+#foreach($triggerChallengeTokenResult in $challengeResponseContext.getTriggerChallengeResult().getTriggerChallengeTokenResults())
+    #if ($triggerChallengeTokenResult.getToken().getType().reponseMode().modeName() == "simple_user_input")
+        #set ($simple_user_input = true)
+    #elseif ($triggerChallengeTokenResult.getToken().getType().typeName() == "web_authn")
+        #set ($webAuthnCredentialRequestOptions = $triggerChallengeTokenResult.getChallenge())
+        #foreach ($webAuthnDescriptor in $webAuthnCredentialRequestOptions.getDescriptors())
+            #set($tmp_result = $webAuthnDescriptors.add($webAuthnDescriptor))
+        #end
+        ## It is assumed that the following values do not differ for all WebAuthn tokens.
+        #set ($webAuthnRpId = $webAuthnCredentialRequestOptions.getRpId())
+        #set ($webAuthnTimeout = $webAuthnCredentialRequestOptions.getTimeout())
+        #set ($webAuthnChallenge = $webAuthnCredentialRequestOptions.getChallenge())
+        #set ($webAuthnUserVerificationType = $webAuthnCredentialRequestOptions.getUserVerificationType())
+    #end
+#end
+
+#if ($webAuthnDescriptors.size() > 0)
+    <script type="text/javascript">
+
+        const translationString = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+
+        function webSafeBase64ToBase64(webSafeBase64) {
+            base64 = webSafeBase64.replaceAll('-', '+').replaceAll('_', '/');
+            while (base64.length % 4)
+                base64 += '=';
+            return base64;
+        };
+
+        function base64ToWebSafeBase64(base64) {
+            return base64.replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "");;
+        };
+
+        function unit8ArrayToUrlSafeBase64 (unit8Array) {
+            const extraBytes = unit8Array.length % 3
+            let output = ''
+            let buffer
+
+            function encode (pos) {
+                return translationString.charAt(pos)
+            }
+
+            function threeBytesToBase64 (threeBytes) {
+                return encode(threeBytes >> 18) + encode(threeBytes >> 12 & 0x3F) + encode(threeBytes >> 6 & 0x3F) + encode(threeBytes & 0x3F)
+            }
+
+            for (let i = 0, length = unit8Array.length - extraBytes; i < length; i += 3) {
+                buffer = (unit8Array[i] << 16) + (unit8Array[i + 1] << 8) + (unit8Array[i + 2])
+                output += threeBytesToBase64(buffer)
+            }
+
+            // pad the end with zeros, but make sure to not forget the extra bytes
+            switch (extraBytes) {
+                case 1:
+                    buffer = unit8Array[unit8Array.length - 1]
+                    output = output + encode(buffer >> 2) + encode((buffer << 4) & 0x3F) + '=='
+                    break
+                case 2:
+                    buffer = (unit8Array[unit8Array.length - 2] << 8) + (unit8Array[unit8Array.length - 1])
+                    output = output + encode(buffer >> 10) + encode((buffer >> 4) & 0x3F) + encode((buffer << 2) & 0x3F) + '='
+                    break
+                default:
+                    break
+            }
+
+            return base64ToWebSafeBase64(output);
+        }
+
+        function webSafeBase64ToBase64(webSafeBase64) {
+            let base64 = webSafeBase64.replaceAll('-', '+').replaceAll('_', '/');
+            while (base64.length % 4)
+                base64 += '=';
+            return base64;
+        };
+
+        function submitWebAuthnAssertionAsJson(webAuthnAssertionAsJson) {
+            const fudiscrForm = document.getElementById("fudiscr-form");
+            fudiscrForm._submit_function_ = fudiscrForm.submit;
+            fudiscrForm.setAttribute("method", "POST");
+            fudiscrForm.setAttribute("action", "$flowExecutionUrl");
+
+            const fudisWebAuthnAssertionAsJsonInputField = document.createElement("input");
+            fudisWebAuthnAssertionAsJsonInputField.setAttribute("type", "hidden");
+            fudisWebAuthnAssertionAsJsonInputField.setAttribute("name", "fudis_web_authn_assertion_input")
+            fudisWebAuthnAssertionAsJsonInputField.setAttribute("id", "fudis_web_authn_assertion_input");
+            fudisWebAuthnAssertionAsJsonInputField.setAttribute("value", base64ToWebSafeBase64(btoa(webAuthnAssertionAsJson)));
+            fudiscrForm.appendChild(fudisWebAuthnAssertionAsJsonInputField);
+
+            const eventIdField = document.createElement("input");
+            eventIdField.setAttribute("name", "_eventId_proceed");
+            eventIdField.hidden = true;
+            fudiscrForm.appendChild(eventIdField);
+            fudiscrForm._submit_function_();
+        }
+
+        function getWebAuthnAssertion() {
+            const publicKeyCredentialRequestOptions = {
+                allowCredentials: [
+                    #foreach ($webAuthnDescriptor in $webAuthnDescriptors)
+                        {
+                            id: Uint8Array.from(atob(webSafeBase64ToBase64("$webAuthnDescriptor.getId()")), c => c.charCodeAt(0)),
+                            type: "$webAuthnDescriptor.getCredentialType()",
+                            transports: [
+                                #foreach ($transportTypes in $webAuthnDescriptor.getTransportTypes())
+                                    "$transportTypes"#if($foreach.hasNext()),#end
+                                #end
+                            ]
+                        }#if($foreach.hasNext()),#end
+                    #end
+                ],
+                challenge: Uint8Array.from(atob(webSafeBase64ToBase64("$webAuthnChallenge")), c => c.charCodeAt(0)),
+                rpId: "$webAuthnRpId",
+                userVerification: "$webAuthnUserVerificationType",
+                timeout: $webAuthnTimeout
+            }
+
+            navigator
+                    .credentials
+                    .get({publicKey: publicKeyCredentialRequestOptions})
+                    .then(function (webAuthnAssertion) {
+                        let webAuthnAssertionForJson = new Object();
+                        webAuthnAssertionForJson.authenticatorData = unit8ArrayToUrlSafeBase64(new Uint8Array(webAuthnAssertion.response.authenticatorData));
+                        webAuthnAssertionForJson.clientDataJson = unit8ArrayToUrlSafeBase64(new Uint8Array(webAuthnAssertion.response.clientDataJSON));
+                        webAuthnAssertionForJson.rawId = unit8ArrayToUrlSafeBase64(new Uint8Array(webAuthnAssertion.rawId));
+                        webAuthnAssertionForJson.signature = unit8ArrayToUrlSafeBase64(new Uint8Array(webAuthnAssertion.response.signature));
+                        webAuthnAssertionForJson.userHandle = unit8ArrayToUrlSafeBase64(new Uint8Array(webAuthnAssertion.response.userHandle));
+                        submitWebAuthnAssertionAsJson(JSON.stringify(webAuthnAssertionForJson));
+                    })
+                    .catch(function (error) {
+
+                        if (error.name == "AbortError") {
+                            document.getElementById("get_web_authn_assertion").childNodes[0].nodeValue = '#springMessageText(
+                                "fudiscr.view.insert-response.web_authn.next" ,"Validate WebAuthn-Token")';
+                        } else {
+                            document.getElementById("get_web_authn_assertion").childNodes[0].nodeValue = error.name + ' - #springMessageText(
+                                "fudiscr.view.insert-response.web_authn.error.please-try-again" ,"Error in validation of WebAuthn token, please try again.")';
+                            console.log(error.name + " - " + error.message);
+                        }
+                    });
+        }
+    </script>
+#end
+
+#if ($webAuthnDescriptors.size() > 0)
+
+    <div class="d-grid mb-2 gap-2 d-md-flex justify-content-md-center">
+        <button  class="form-button btn btn-hm"  type="button" id="get_web_authn_assertion"
+                onClick="this.childNodes[0].nodeValue='#springMessageText("fudiscr.view.insert-response.web_authn.please-wait", "Validating WebAuthn-Token, bitte warten...")'; getWebAuthnAssertion();">#springMessageText("fudiscr.view.insert-response.web_authn.next" ,"Validate WebAuthn-Token")</button>
+    </div>
+#end
+#if ($simple_user_input)
+    <div class="d-grid mb-2 mt-2 gap-2 d-md-flex justify-content-md-center">
+        <input class="form-control mb-2" id="fudis_otp_input" placeholder="OTP" name="fudis_otp_input" type="password"
+               value="" autocomplete="off" autofocus=""/>
+    </div>
+
+    #if ($challengeResponseContext.withAdditionalPinResponse())
+        <div class="d-grid mb-2 gap-2 d-md-flex justify-content-md-center">
+            <legend for="fudis_pin_input">#springMessageText(
+                        "fudiscr.view.insert-response.pin.message", "Please insert additional pin.")</legend>
+        </div>
+        <div class="d-grid mb-2 gap-2 d-md-flex justify-content-md-center">
+            <input class="form-control mb-2" id="fudis_pin_input" placeholder="OTP PIN" name="fudis_pin_input" type="password"
+                   value="" autocomplete="off"/>
+        </div>
+    #end
+#end
+#if ($simple_user_input)
+    <div class="d-grid mb-2 gap-2 d-md-flex justify-content-md-center">
+        <button  class="form-button btn btn-hm"  type="submit" name="_eventId_proceed"
+                onClick="this.childNodes[0].nodeValue='#springMessageText(
+                    "fudiscr.view.insert-response.please-wait", "Validating, please wait...")'"
+        >#springMessageText("fudiscr.view.insert-response.next", "Validate")</button>
+    </div>
+#end
+#if($challengeResponseContext.getRestartIsAllowedWithinResponsePage())
+    <div class="d-grid mb-2 gap-2 d-md-flex justify-content-md-center">
+        <button  class="form-button btn btn-hm"  type="submit" name="_eventId_FudisCrRestart"
+                onClick="this.childNodes[0].nodeValue='#springMessageText(
+                    "fudiscr.view.insert-response.restart-token-challenge.please-wait",
+                    "Restarting token challenge, please wait...")'"
+        >#springMessageText("fudiscr.view.insert-response.restart-token-challenge.next", "Restart token challenge")</button>
+    </div>
+#end
+
+#parse("login-error.vm")
