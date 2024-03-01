@@ -120,14 +120,29 @@
             <input type="text" style="display: none;" name="fudis_web_authn_assertion_input" />
         </div>
     </div>
+    <hr style="height: 1.5em" class="hr-text" data-content="#springMessageText("idp.fido2userless.login.or","oder")" />    
     <div class="grid">
         <div class="grid-item">
             <div class="d-grid gap-2 mt-2 d-md-flex justify-content-md-center">
-                <button class="btn btn-hm" onClick="manualPasskeyLogin(event)">#springMessageText("idp.fido2userless.login.login", "FIDO2 Userless")</button>
+                
+		<button class="btn btn-hm" onClick="manualPasskeyLogin(event)" id="fido-button">
+            <div style="display: flex">
+                <span id="fido">
+                    <img style="height: 1.5em" src="/idp/images/fido-black.svg">
+                </span>
+                <span id="fido-dark">
+                    <img style="height: 1.5em" src="/idp/images/fido-white.svg"/> 
+                </span>
+                <span>
+                    #springMessageText("idp.fido2userless.login.login", "Passkey Login")
+                </span>
+            </div>
+		</button>
             </div>
             <button type="submit" style="display: none;" id="fido2userless" name="_eventId_fido2userless"
                     onClick="this.childNodes[0].nodeValue='#springMessageText("idp.fido2userless.login.pleasewait", "Logging in, please wait...")'"
-            >#springMessageText("idp.fido2userless.login.login", "FIDO2 Userless")</button>
+            >#springMessageText("idp.fido2userless.login.login", "Passkey Login")</button>
         </div>
     </div>
 #end
+
