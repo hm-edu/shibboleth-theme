@@ -148,6 +148,10 @@
         <button  class="form-button btn btn-hm"  type="button" id="get_web_authn_assertion"
                 onClick="this.childNodes[0].nodeValue='#springMessageText("fudiscr.view.insert-response.web_authn.please-wait", "Validating WebAuthn-Token, bitte warten...")'; getWebAuthnAssertion();">#springMessageText("fudiscr.view.insert-response.web_authn.next" ,"Validate WebAuthn-Token")</button>
     </div>
+
+    #if ($simple_user_input)
+        <hr style="height: 1.5em" class="hr-text" data-content="#springMessageText("idp.fido2userless.login.or","Or")" />   
+    #end
 #end
 #if ($simple_user_input)
     <div class="d-grid mb-2 mt-2 gap-2 d-md-flex justify-content-md-center">

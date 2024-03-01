@@ -97,9 +97,9 @@
           #parse("csrf/csrf.vm")
 
           #if ($passwordEnabled)
-          <input class="form-control mb-1" id="username" name="j_username" placeholder="#springMessageText("idp.login.username", "Username")" type="text" value="#if($username)$encoder.encodeForHTML($username)#end" />
+          <input class="form-control mb-1" id="username" name="j_username" autocomplete="username webauthn" placeholder="#springMessageText("idp.login.username", "Username")" type="text" value="#if($username)$encoder.encodeForHTML($username)#end" />
           
-          <input class="form-control mb-2" id="password" name="j_password" type="password" value="" placeholder="#springMessageText("idp.login.password", "Password")" />       
+          <input class="form-control mb-2" id="password" name="j_password" autocomplete="password webauthn"  type="password" value="" placeholder="#springMessageText("idp.login.password", "Password")" />       
           #end
 
           #set ($rpContext = $profileRequestContext.getSubcontext('net.shibboleth.idp.profile.context.RelyingPartyContext'))
