@@ -176,6 +176,15 @@ form > .form-control + .form-control {
   color: #f4f4f4;
 }
 
+.btn-hm:hover > div > #fido {
+  display: none;
+}
+
+.btn-hm:hover > div > #fido-dark {
+  display: flex;
+}
+
+
 a {
   color: #161616;
 }
